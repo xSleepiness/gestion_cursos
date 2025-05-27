@@ -26,16 +26,20 @@ public class CursoService {
         return cursoRepository.save(curso);
     }
 
-    public Curso actualizar(Long id, Curso datosCurso) {
+    public Optional<Curso> actualizar(Long id, Curso datosCurso) {
         return cursoRepository.findById(id).map(curso -> {
             curso.setNombre(datosCurso.getNombre());
             curso.setDescripcion(datosCurso.getDescripcion());
             curso.setDuracion(datosCurso.getDuracion());
             return cursoRepository.save(curso);
-        }).orElse(null);
+        });
     }
 
-    public void eliminar(Long id) {
-        cursoRepository.deleteById(id);
+    public boolean eliminar(Long id) {
+        if (cursoRepository.existsById(id)) {
+            cursoRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }
