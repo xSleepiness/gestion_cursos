@@ -8,6 +8,23 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Servicio que contiene la lógica de negocio para la gestión de cursos.
+ *
+ * Este servicio actúa como intermediario entre el controlador (CursoController)
+ * y el repositorio (CursoRepository), encapsulando las operaciones CRUD
+ * y cualquier lógica adicional relacionada con la entidad Curso.
+ *
+ * Métodos principales:
+ * - obtenerTodos(): Devuelve la lista de todos los cursos.
+ * - obtenerPorId(Long id): Busca un curso por su ID.
+ * - crear(Curso curso): Guarda un nuevo curso en la base de datos.
+ * - actualizar(Long id, Curso datosCurso): Actualiza los datos de un curso existente.
+ * - eliminar(Long id): Elimina un curso por su ID.
+ *
+ * El uso de Optional en algunos métodos permite manejar de forma segura
+ * los casos en los que un curso no existe.
+ */
 @Service
 public class CursoService {
 
