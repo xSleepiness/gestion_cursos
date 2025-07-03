@@ -1,6 +1,40 @@
-# Fullstack Cursos
+# Fullstack Cursos - Gestión de Cursos y Alumnos
 
-Este proyecto es un microservicio desarrollado con **Spring Boot** para la gestión de cursos. Permite realizar operaciones CRUD (Crear, Leer, Actualizar y Eliminar) sobre la entidad `Curso`, almacenando la información en una base de datos relacional (MariaDB/MySQL).
+Este proyecto es un microservicio desarrollado con **Spring Boot** para la gestión de cursos y alumnos. Permite realizar operaciones CRUD (Crear, Leer, Actualizar y Eliminar) sobre las entidades `Curso` y `Alumno`, con integración a una API externa de usuarios, almacenando la información en una base de datos relacional (MariaDB/MySQL).
+
+## 🌟 Características Principales
+
+- **Gestión de Cursos**: CRUD completo para cursos
+- **Gestión de Alumnos**: Integración híbrida con API externa + datos locales
+- **Múltiples Perfiles**: Desarrollo, Testing, Staging y Producción
+- **API Externa**: Integración con API de usuarios de compañero
+- **Documentación**: Swagger/OpenAPI integrado
+- **Datos de Prueba**: Generación automática con DataFaker
+- **Pruebas**: Unitarias y de integración con Mockito
+- **Caché**: Sistema de caché para optimización
+- **Resiliencia**: Fallback automático si API externa no disponible
+
+## 🔌 Integración con API Externa
+
+Este proyecto integra datos de alumnos con una API externa de usuarios:
+
+- **Repositorio del Compañero**: https://github.com/demianpulgar/FullStack_I
+- **Estrategia Híbrida**: Prioriza API externa, fallback a datos locales
+- **Mapeo Automático**: Convierte usuarios externos en alumnos locales
+- **Verificación de Estado**: Endpoint para verificar disponibilidad de API externa
+
+### Configuración Rápida
+
+1. **Configurar API Externa**:
+```env
+EXTERNAL_API_USERS_BASE_URL=http://localhost:8080
+```
+
+2. **Ejecutar API del Compañero** (puerto 8080)
+
+3. **Ejecutar Nuestra Aplicación** (puerto 8081)
+
+📖 **Guía Completa**: [CONFIGURACION_RAPIDA.md](CONFIGURACION_RAPIDA.md)
 
 ---
 
