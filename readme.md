@@ -42,37 +42,67 @@ EXTERNAL_API_USERS_BASE_URL=http://localhost:8080
 
 ```
 gestion_cursos/
-│
-├── src/
-│   ├── main/
-│   │   ├── java/
-│   │   │   └── com/
-│   │   │       └── fullstack/
-│   │   │           └── fullstack/
-│   │   │               ├── FullstackApplication.java         # Clase principal Spring Boot
-│   │   │               ├── Controller/
-│   │   │               │   └── CursoController.java          # Controlador REST para cursos
-│   │   │               ├── Model/
-│   │   │               │   └── Curso.java                    # Entidad JPA Curso
-│   │   │               ├── Repository/
-│   │   │               │   └── CursoRepository.java          # Repositorio JPA para Curso
-│   │   │               └── Service/
-│   │   │                   └── CursoService.java             # Lógica de negocio para cursos
-│   │   ├── resources/
-│   │   │   ├── application.properties                        # Configuración de la aplicación
-│   │   │   ├── static/                                       # Recursos estáticos (opcional)
-│   │   │   └── templates/                                    # Plantillas (opcional)
-│   └── test/
-│       └── java/
-│           └── com/
-│               └── fullstack/
-│                   └── fullstack/
-│                       └── FullstackApplicationTests.java    # Pruebas unitarias básicas
-│
-├── .mvn/                                                     # Archivos de configuración Maven Wrapper
-├── .gitignore
-├── pom.xml                                                   # Archivo de dependencias Maven
-└── README.md                                                 # Readme
+|
++-- src/
+|   +-- main/
+|   |   +-- java/
+|   |   |   +-- com/
+|   |   |       +-- fullstack/
+|   |   |           +-- fullstack/
+|   |   |               +-- FullstackApplication.java         # Clase principal Spring Boot
+|   |   |               +-- Config/
+|   |   |               |   +-- CacheConfig.java              # Configuracion de cache
+|   |   |               |   +-- DataLoader.java               # Carga de datos iniciales
+|   |   |               |   +-- SwaggerConfig.java            # Configuracion Swagger
+|   |   |               +-- Controller/
+|   |   |               |   +-- AlumnoController.java         # Controlador REST para alumnos
+|   |   |               |   +-- CursoController.java          # Controlador REST para cursos
+|   |   |               +-- DTO/
+|   |   |               |   +-- HateoasResponse.java          # DTO para respuestas HATEOAS
+|   |   |               |   +-- UserDTO.java                  # DTO para usuarios externos
+|   |   |               |   +-- UserListHateoasResponse.java  # DTO para listas HATEOAS
+|   |   |               +-- Model/
+|   |   |               |   +-- Alumno.java                   # Entidad JPA Alumno
+|   |   |               |   +-- Curso.java                    # Entidad JPA Curso
+|   |   |               +-- Repository/
+|   |   |               |   +-- AlumnoRepository.java         # Repositorio JPA para Alumno
+|   |   |               |   +-- CursoRepository.java          # Repositorio JPA para Curso
+|   |   |               +-- Service/
+|   |   |                   +-- AlumnoService.java            # Logica de negocio para alumnos
+|   |   |                   +-- CursoService.java             # Logica de negocio para cursos
+|   |   |                   +-- UserApiService.java           # Servicio para API externa
+|   |   +-- resources/
+|   |       +-- application.properties                        # Configuracion principal
+|   |       +-- application-dev.properties                    # Configuracion desarrollo
+|   |       +-- application-prod.properties                   # Configuracion produccion
+|   |       +-- application-staging.properties                # Configuracion staging
+|   |       +-- application-test.properties                   # Configuracion testing
+|   |       +-- static/                                       # Recursos estaticos
+|   |       +-- templates/                                    # Plantillas
+|   +-- test/
+|       +-- java/
+|           +-- com/
+|               +-- fullstack/
+|                   +-- fullstack/
+|                       +-- FullstackApplicationTests.java    # Pruebas de aplicacion
+|                       +-- Controller/
+|                       |   +-- CursoControllerTest.java      # Tests del controlador
+|                       +-- Service/
+|                           +-- CursoServiceTest.java         # Tests del servicio
+|
++-- .env                                                      # Variables de entorno
++-- .gitignore                                                # Archivos ignorados por Git
++-- pom.xml                                                   # Dependencias Maven
++-- README.md                                                 # Documentacion principal
++-- CONFIGURACION_RAPIDA.md                                   # Guia de configuracion rapida
++-- INTEGRACION_API_EXTERNA.md                                # Guia de integracion API externa
++-- HATEOAS_IMPLEMENTATION.md                                 # Guia de implementacion HATEOAS
++-- HATEOAS_EJEMPLOS.md                                       # Ejemplos de uso HATEOAS
++-- SOLUCION_TIMEOUT.md                                       # Solucion problemas timeout
++-- ELIMINACION_USUARIOS_GUIA.md                              # Guia eliminacion usuarios
++-- test-conectividad.bat                                     # Script de pruebas conectividad
++-- mvnw                                                      # Maven Wrapper (Unix)
++-- mvnw.cmd                                                  # Maven Wrapper (Windows)
 ```
 
 ---

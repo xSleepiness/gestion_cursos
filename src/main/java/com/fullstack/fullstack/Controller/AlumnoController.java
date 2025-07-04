@@ -2,11 +2,13 @@ package com.fullstack.fullstack.Controller;
 
 import com.fullstack.fullstack.Model.Alumno;
 import com.fullstack.fullstack.Service.AlumnoService;
+import com.fullstack.fullstack.Service.UserApiService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +21,14 @@ import java.util.Optional;
 @RequestMapping("/api/alumnos")
 @CrossOrigin(origins = "*")
 @Tag(name = "Alumnos", description = "API para gestión de alumnos integrada con API externa de usuarios")
+@Slf4j
 public class AlumnoController {
 
     @Autowired
     private AlumnoService alumnoService;
+
+    @Autowired
+    private UserApiService userApiService;
 
     @GetMapping
     @Operation(summary = "Listar todos los alumnos", 
@@ -79,7 +85,7 @@ public class AlumnoController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar alumno", 
-               description = "Actualiza un alumno existente en la base de datos local.")
+               description = "Actualiza un alumno existente tanto en la API externa como en la base de datos local. Prioriza la API externa.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Alumno actualizado exitosamente"),
         @ApiResponse(responseCode = "404", description = "Alumno no encontrado para actualizar"),
@@ -101,7 +107,7 @@ public class AlumnoController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar alumno", 
-               description = "Elimina un alumno existente de la base de datos local.")
+               description = "Elimina un alumno existente tanto de la API externa como de la base de datos local.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "204", description = "Alumno eliminado exitosamente"),
         @ApiResponse(responseCode = "404", description = "Alumno no encontrado para eliminar"),
@@ -150,6 +156,38 @@ public class AlumnoController {
             return ResponseEntity.ok(mensaje);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al verificar la API externa");
+        }
+    }
+
+    @GetMapping("/diagnostico/conectividad")
+    @Operation(summary = "Diagnóstico de conectividad", 
+               description = "Ejecuta pruebas de conectividad con diferentes timeouts para diagnosticar problemas de red.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Diagnóstico completado"),
+        @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
+    public ResponseEntity<String> diagnosticarConectividad() {
+        try {
+            String resultado = userApiService.diagnosticarConectividad();
+            return ResponseEntity.ok(resultado);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al ejecutar diagnóstico: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/debug/test-api")
+    @Operation(summary = "Prueba de diagnóstico de API externa", 
+               description = "Método temporal para diagnosticar problemas de mapeo JSON")
+    public ResponseEntity<String> testApiExterna() {
+        log.info("Iniciando prueba de diagnóstico de API externa...");
+        try {
+            userApiService.testApiResponse();
+            return ResponseEntity.ok("Prueba completada. Revisa los logs para ver los resultados.");
+        } catch (Exception e) {
+            log.error("Error en prueba de API externa: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error en la prueba: " + e.getMessage());
         }
     }
 }

@@ -68,12 +68,14 @@ class CursoControllerTest {
         mockMvc.perform(get("/api/cursos")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].id", is(1)))
-                .andExpect(jsonPath("$[0].nombre", is("Programación Java")))
-                .andExpect(jsonPath("$[0].duracion", is(40)))
-                .andExpect(jsonPath("$[1].id", is(2)))
-                .andExpect(jsonPath("$[1].nombre", is("Desarrollo Web")));
+                .andExpect(jsonPath("$._embedded.cursoList", hasSize(2)))
+                .andExpect(jsonPath("$._embedded.cursoList[0].id", is(1)))
+                .andExpect(jsonPath("$._embedded.cursoList[0].nombre", is("Programación Java")))
+                .andExpect(jsonPath("$._embedded.cursoList[0].duracion", is(40)))
+                .andExpect(jsonPath("$._embedded.cursoList[0]._links.self.href").exists())
+                .andExpect(jsonPath("$._embedded.cursoList[1].id", is(2)))
+                .andExpect(jsonPath("$._embedded.cursoList[1].nombre", is("Desarrollo Web")))
+                .andExpect(jsonPath("$._links.self.href").exists());
 
         // Verificar que se llamó al servicio
         verify(cursoService, times(1)).obtenerTodos();
@@ -91,7 +93,11 @@ class CursoControllerTest {
                 .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.nombre", is("Programación Java")))
                 .andExpect(jsonPath("$.descripcion", is("Curso completo de Java")))
-                .andExpect(jsonPath("$.duracion", is(40)));
+                .andExpect(jsonPath("$.duracion", is(40)))
+                .andExpect(jsonPath("$._links.self.href").exists())
+                .andExpect(jsonPath("$._links.actualizar.href").exists())
+                .andExpect(jsonPath("$._links.eliminar.href").exists())
+                .andExpect(jsonPath("$._links.cursos.href").exists());
 
         // Verificar que se llamó al servicio
         verify(cursoService, times(1)).obtenerPorId(1L);
@@ -135,7 +141,11 @@ class CursoControllerTest {
                 .andExpect(jsonPath("$.id", is(3)))
                 .andExpect(jsonPath("$.nombre", is("Machine Learning")))
                 .andExpect(jsonPath("$.descripcion", is("Curso de inteligencia artificial")))
-                .andExpect(jsonPath("$.duracion", is(80)));
+                .andExpect(jsonPath("$.duracion", is(80)))
+                .andExpect(jsonPath("$._links.self.href").exists())
+                .andExpect(jsonPath("$._links.actualizar.href").exists())
+                .andExpect(jsonPath("$._links.eliminar.href").exists())
+                .andExpect(jsonPath("$._links.cursos.href").exists());
 
         // Verificar que se llamó al servicio
         verify(cursoService, times(1)).crear(any(Curso.class));
@@ -179,7 +189,11 @@ class CursoControllerTest {
                 .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.nombre", is("Java Avanzado")))
                 .andExpect(jsonPath("$.descripcion", is("Curso avanzado de Java")))
-                .andExpect(jsonPath("$.duracion", is(50)));
+                .andExpect(jsonPath("$.duracion", is(50)))
+                .andExpect(jsonPath("$._links.self.href").exists())
+                .andExpect(jsonPath("$._links.actualizar.href").exists())
+                .andExpect(jsonPath("$._links.eliminar.href").exists())
+                .andExpect(jsonPath("$._links.cursos.href").exists());
 
         // Verificar que se llamó al servicio
         verify(cursoService, times(1)).actualizar(eq(1L), any(Curso.class));

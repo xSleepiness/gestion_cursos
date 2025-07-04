@@ -146,7 +146,7 @@ public class AlumnoService {
     }
 
     /**
-     * Actualiza un alumno en la base de datos local
+     * Actualiza un alumno tanto en la API externa como en la base de datos local
      * @param id ID del alumno
      * @param alumno Datos actualizados
      * @return Alumno actualizado
@@ -155,6 +155,24 @@ public class AlumnoService {
         try {
             log.info("Actualizando alumno ID {}", id);
             
+            // Intentar actualizar en la API externa primero
+            try {
+                UserDTO userDTO = convertirAlumnoAUser(alumno);
+                Optional<UserDTO> userActualizado = userApiService.updateUser(id, userDTO);
+                
+                if (userActualizado.isPresent()) {
+                    log.info("Alumno ID {} actualizado exitosamente en la API externa", id);
+                    // Convertir de vuelta a Alumno y actualizar en base local
+                    Alumno alumnoActualizado = convertirUserAAlumno(userActualizado.get());
+                    return alumnoRepository.save(alumnoActualizado);
+                } else {
+                    log.warn("No se pudo actualizar el alumno ID {} en la API externa", id);
+                }
+            } catch (Exception e) {
+                log.error("Error al actualizar alumno ID {} en la API externa: {}", id, e.getMessage());
+            }
+            
+            // Fallback: actualizar solo en la base de datos local
             Optional<Alumno> existente = alumnoRepository.findById(id);
             if (existente.isPresent()) {
                 alumno.setId(id);
@@ -171,18 +189,37 @@ public class AlumnoService {
     }
 
     /**
-     * Elimina un alumno de la base de datos local
+     * Elimina un alumno tanto de la API externa como de la base de datos local
      * @param id ID del alumno
      */
     public void eliminar(Long id) {
         try {
             log.info("Eliminando alumno ID {}", id);
             
+            // Intentar eliminar de la API externa primero
+            boolean eliminadoExterno = false;
+            try {
+                eliminadoExterno = userApiService.deleteUser(id);
+                if (eliminadoExterno) {
+                    log.info("Alumno ID {} eliminado exitosamente de la API externa", id);
+                } else {
+                    log.warn("Alumno ID {} no encontrado en la API externa para eliminar", id);
+                }
+            } catch (Exception e) {
+                log.error("Error al eliminar alumno ID {} de la API externa: {}", id, e.getMessage());
+            }
+            
+            // Eliminar de la base de datos local
             if (alumnoRepository.existsById(id)) {
                 alumnoRepository.deleteById(id);
+                log.info("Alumno ID {} eliminado de la base de datos local", id);
             } else {
-                log.warn("Alumno ID {} no encontrado para eliminar", id);
-                throw new RuntimeException("Alumno no encontrado para eliminar");
+                log.warn("Alumno ID {} no encontrado en la base de datos local para eliminar", id);
+                
+                // Si no se eliminó ni de la API externa ni de la base local, lanzar excepción
+                if (!eliminadoExterno) {
+                    throw new RuntimeException("Alumno no encontrado para eliminar");
+                }
             }
             
         } catch (Exception e) {
@@ -214,6 +251,21 @@ public class AlumnoService {
         alumno.setEmail(user.getEmail());
         // Nota: Los cursos se mantienen como una lista vacía ya que vienen de la API externa
         return alumno;
+    }
+
+    /**
+     * Convierte un Alumno local a un UserDTO para la API externa
+     * @param alumno Alumno local
+     * @return UserDTO convertido
+     */
+    private UserDTO convertirAlumnoAUser(Alumno alumno) {
+        UserDTO user = new UserDTO();
+        user.setId(alumno.getId());
+        user.setName(alumno.getNombre());
+        user.setEmail(alumno.getEmail());
+        user.setActivo(true); // Por defecto activo
+        user.setRol("STUDENT"); // Rol por defecto para alumnos
+        return user;
     }
 
     /**
